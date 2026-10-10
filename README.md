@@ -2,7 +2,7 @@
 
 Sitio web de Diseños y Creaciones Martha Martínez, publicado con GitHub Pages.
 
-- Sitio: https://racso.github.io/martha-martinez/
+- Sitio: https://racsoscar.github.io/martha-martinez/
 - Las prendas se cargan desde el panel administrativo (Apps Script, `?vista=panel`) y se guardan en Google Sheets.
 - Este sitio las lee desde la URL del script configurada en `CONFIG.apiUrl` dentro de `index.html`.
 - Los pedidos se envían al mismo script, que los guarda en la pestaña "Pedidos" y avisa por correo.
