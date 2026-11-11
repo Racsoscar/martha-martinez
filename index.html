@@ -192,6 +192,7 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 .sheet.open{transform:translate(-50%,0);visibility:visible;transition:transform .5s var(--ease-drawer),visibility 0s}
 .grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:10px auto 0}
 .sheet-in{display:grid;grid-template-columns:1fr;gap:22px;padding:16px 22px 26px}
+.sheet-in>*{min-width:0} /* las columnas no se ensanchan con muchas miniaturas: la fila se desliza de lado */
 @media (min-width:740px){.sheet-in{grid-template-columns:1fr 1fr;gap:30px;padding:22px 30px 30px}.sheet-in>div:first-child{position:sticky;top:22px;align-self:start}.grab{display:none}}
 .sheet .photo{aspect-ratio:1/1}
 .sheet .jk{width:72%}
