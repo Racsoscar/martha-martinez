@@ -257,10 +257,12 @@ footer{border-top:1.5px dashed var(--line);padding:20px 0 32px;color:var(--muted
 #pMedia{touch-action:pan-y}
 #pMedia:has(img){cursor:zoom-in}
 .zhint{position:absolute;right:14px;bottom:14px;z-index:2;display:inline-flex;align-items:center;gap:6px;background:color-mix(in oklab,var(--surface) 92%,transparent);color:var(--ink);font-size:12px;font-weight:500;padding:5px 10px;border-radius:999px;pointer-events:none}
-.zoom{position:fixed;inset:0;z-index:60;background:#1A0F17;display:grid;place-items:center;overflow:hidden;touch-action:none;opacity:0;transition:opacity .22s ease-out}
+.zoom{position:fixed;inset:0;z-index:60;background:#1A0F17;display:grid;place-items:center;overflow:hidden;touch-action:none;overscroll-behavior:contain;opacity:0;transition:opacity .22s ease-out}
 .zoom.open{opacity:1}
 .zoom img{max-width:100%;max-height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;-webkit-touch-callout:none;will-change:transform;transform-origin:center center;transition:opacity .25s ease-out}
 .zoom img.cargando{opacity:.55}
+.zoom.ampliada{cursor:grab}
+.zoom.ampliada:active{cursor:grabbing}
 .zoom .zx{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center;cursor:pointer}
 .zoom .zx:active{transform:scale(.94)}
 .zoom .zt{position:absolute;bottom:calc(18px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:13px;white-space:nowrap;pointer-events:none;transition:opacity .3s}
@@ -776,6 +778,7 @@ function zAplicar(anim){
   Z.x=Math.min(mx,Math.max(-mx,Z.x)); Z.y=Math.min(my,Math.max(-my,Z.y));
   Z.img.style.transition=anim?"transform .3s cubic-bezier(.23,1,.32,1)":"none";
   Z.img.style.transform=`translate(${Z.x}px,${Z.y}px) scale(${Z.s})`;
+  Z.el.classList.toggle("ampliada",Z.s>1);
 }
 function zEn(fx,fy,s2){ // acerca o aleja manteniendo fijo el punto bajo los dedos
   const cx=innerWidth/2, cy=innerHeight/2, k=s2/Z.s;
@@ -784,7 +787,7 @@ function zEn(fx,fy,s2){ // acerca o aleja manteniendo fijo el punto bajo los ded
 function abrirZoom(src,alt){
   if(!Z.el){
     Z.el=document.createElement("div"); Z.el.className="zoom"; Z.el.setAttribute("role","dialog"); Z.el.setAttribute("aria-label","Foto ampliada");
-    Z.el.innerHTML=`<img alt=""><button class="zx" type="button" aria-label="Cerrar foto"><svg width="16" height="16" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><p class="zt">Pellizca o toca dos veces para acercar</p>`;
+    Z.el.innerHTML=`<img alt=""><button class="zx" type="button" aria-label="Cerrar foto"><svg width="16" height="16" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><p class="zt">Pellizca o toca dos veces para acercar · arrastra para recorrer</p>`;
     document.body.appendChild(Z.el); Z.img=Z.el.querySelector("img");
     Z.el.querySelector(".zx").addEventListener("click",cerrarZoom);
     Z.img.addEventListener("error",()=>{ if(Z.img.dataset.base&&Z.img.src!==Z.img.dataset.base){Z.img.src=Z.img.dataset.base;} });
@@ -804,7 +807,16 @@ function abrirZoom(src,alt){
           else{Z.ultimoToque=ahora; if(e.target===Z.el&&Z.s===1) setTimeout(()=>{if(Z.ultimoToque===ahora)cerrarZoom();},300);} }
       }};
     Z.el.addEventListener("pointerup",fin); Z.el.addEventListener("pointercancel",fin);
-    Z.el.addEventListener("wheel",e=>{e.preventDefault();zEn(e.clientX,e.clientY,Math.min(5,Math.max(1,Z.s*(e.deltaY<0?1.15:1/1.15))));if(Z.s===1){Z.x=0;Z.y=0;}zAplicar(false);},{passive:false});
+    // Safari en iPhone ignora touch-action:none: sin esto el navegador se queda con el arrastre y la foto no se mueve
+    Z.el.addEventListener("touchmove",e=>{e.preventDefault();},{passive:false});
+    Z.el.addEventListener("gesturestart",e=>{e.preventDefault();});
+    // Rueda / touchpad: con la foto ampliada, desplazar recorre la imagen; Ctrl + rueda (o pellizco en el touchpad) acerca o aleja
+    Z.el.addEventListener("wheel",e=>{e.preventDefault();
+      if(Z.s>1&&!e.ctrlKey){Z.x-=e.deltaX;Z.y-=e.deltaY;zAplicar(false);return;}
+      zEn(e.clientX,e.clientY,Math.min(5,Math.max(1,Z.s*(e.deltaY<0?1.15:1/1.15))));if(Z.s===1){Z.x=0;Z.y=0;}zAplicar(false);},{passive:false});
+    // Teclado: flechas para recorrer la foto ampliada
+    Z.el.addEventListener("keydown",e=>{const m={ArrowUp:[0,80],ArrowDown:[0,-80],ArrowLeft:[80,0],ArrowRight:[-80,0]}[e.key];
+      if(!m||Z.s<=1)return;e.preventDefault();Z.x+=m[0];Z.y+=m[1];zAplicar(true);});
   }
   Z.s=1;Z.x=0;Z.y=0;Z.p.clear();
   Z.img.alt=alt||""; Z.img.dataset.base=src; Z.img.src=src; zAplicar(false);
