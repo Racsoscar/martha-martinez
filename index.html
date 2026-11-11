@@ -267,6 +267,9 @@ footer{border-top:1.5px dashed var(--line);padding:20px 0 32px;color:var(--muted
 .zoom .zx:active{transform:scale(.94)}
 .zoom .zt{position:absolute;bottom:calc(18px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:13px;white-space:nowrap;pointer-events:none;transition:opacity .3s}
 .foto-falla{position:absolute;inset:0;display:grid;place-items:center}
+/* Cambio de foto al elegir otro color */
+@keyframes cambioColor{from{opacity:.35}to{opacity:1}}
+#pMedia img.cambio-color{animation:cambioColor .3s ease-out}
 .foto-falla .jk{position:relative;width:62%}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:0s!important;animation:none!important}
@@ -665,7 +668,7 @@ function abrir(ref,el){
   $("#pSizes").innerHTML=actual.tallas.map(s=>`<button type="button" class="size" aria-pressed="false" data-s="${esc(s)}">${esc(s)}</button>`).join("");
   $("#pSizes").classList.remove("need");
   const m=$("#pMedia"); m.style.cssText=jVars(color&&color.hex);
-  pintarMedia(); pintarColores(); actualizarResumen();
+  pintarMedia(); pintarColores(); actualizarResumen(); precargarFotos(actual);
   const agotado=actual.disponible==="Agotado";
   const f=$("#pForm"); f.reset(); f.hidden=agotado; $("#pAgotado").hidden=!agotado; $("#pDone").hidden=true;
   limpiarErrores(); $("#pMsg").textContent=""; $("#pMsg").className="note";
@@ -708,10 +711,17 @@ function cerrarConTransicion(){
   const t=document.startViewTransition(()=>{$("#pMedia").style.viewTransitionName="";cerrar();f.style.viewTransitionName="prenda";});
   t.finished.finally(()=>{f.style.viewTransitionName="";hoja.classList.remove("instant");bd.classList.remove("instant");});
 }
-function pintarMedia(){
+/* Foto por color: si la prenda tiene al menos tantas fotos como colores, la foto N es la del color N
+   (Martha sube las fotos en el mismo orden en que escribe los colores en el panel) */
+const fotosPorColor=p=>p.colores.length>1&&p.fotos.length>=p.colores.length;
+function precargarFotos(p){ if(fotosPorColor(p)) p.fotos.slice(0,p.colores.length).forEach(u=>{const im=new Image();im.src=u;}); }
+function pintarMedia(fundido){
   const f=actual.fotos, m=$("#pMedia");
   m.innerHTML=`<span class="badge${badgeClase(actual.disponible)}">${esc(actual.disponible)}</span>`+media(actual,foto,false)+(f.length?`<span class="zhint" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Toca para ampliar</span>`:"");
-  $("#pThumbs").innerHTML=f.length>1?f.map((u,i)=>`<button type="button" data-f="${i}" aria-current="${i===foto}" aria-label="Ver foto ${i+1}"><img src="${esc(u)}" alt=""></button>`).join(""):"";
+  if(fundido&&!sinMovimiento()){const im=m.querySelector("img");if(im)im.classList.add("cambio-color");}
+  const porColor=fotosPorColor(actual);
+  $("#pThumbs").innerHTML=f.length>1?f.map((u,i)=>{const c=porColor&&actual.colores[i];const lbl=c?`Ver en ${c.nombre||"color "+(i+1)}`:`Ver foto ${i+1}`;
+    return `<button type="button" data-f="${i}" aria-current="${i===foto}" aria-label="${esc(lbl)}"><img src="${esc(u)}" alt=""></button>`;}).join(""):"";
 }
 function pintarColores(){
   $("#pColors").innerHTML=actual.colores.map((c,i)=>`<button type="button" class="sw" aria-pressed="${c===color}" data-i="${i}"><i style="background:${c.hex}"></i>${esc(c.nombre||"Color "+(i+1))}</button>`).join("");
@@ -746,7 +756,10 @@ $("#grid").addEventListener("click",e=>{
   const fb=e.target.closest(".fav[data-fav]"); if(fb){toggleFav(fb.dataset.fav);return;}
   const o=e.target.closest(".card-open"); if(o) abrirConTransicion(o.dataset.open,o.closest(".card"));
 });
-$("#pThumbs").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;foto=Number(b.dataset.f);pintarMedia();});
+$("#pThumbs").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;foto=Number(b.dataset.f);
+  // con fotos por color, tocar la miniatura N también elige el color N
+  if(fotosPorColor(actual)&&actual.colores[foto]){color=actual.colores[foto];$("#pMedia").style.cssText=jVars(color.hex);pintarColores();actualizarResumen();}
+  pintarMedia(true);});
 $("#pSizes").addEventListener("click",e=>{const b=e.target.closest(".size");if(!b)return;talla=b.dataset.s;
   document.querySelectorAll(".size").forEach(x=>x.setAttribute("aria-pressed",x===b));
   $("#pSizes").classList.remove("need"); if($("#pMsg").dataset.talla){$("#pMsg").textContent="";delete $("#pMsg").dataset.talla;}
@@ -754,6 +767,8 @@ $("#pSizes").addEventListener("click",e=>{const b=e.target.closest(".size");if(!
 $("#pColors").addEventListener("click",e=>{const b=e.target.closest(".sw");if(!b)return;
   color=actual.colores[Number(b.dataset.i)];
   $("#pMedia").style.cssText=jVars(color.hex);  // la ilustración cambia de color con una transición
+  // con fotos por color, se muestra la foto de ese color
+  if(fotosPorColor(actual)&&foto!==Number(b.dataset.i)){foto=Number(b.dataset.i);pintarMedia(true);}
   pintarColores(); actualizarResumen();
   $(`.sw[data-i="${b.dataset.i}"]`).focus({preventScroll:true});});
 $("#pDone").addEventListener("click",e=>{if(e.target.closest("[data-cerrar]"))cerrarConTransicion();});
