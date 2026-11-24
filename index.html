@@ -219,6 +219,33 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 .sizes.need{box-shadow:0 0 0 2px var(--accent),0 0 0 6px color-mix(in oklab,var(--accent) 20%,transparent)}
 .size{min-width:48px;height:44px;border:1.5px solid var(--line);border-radius:10px;background:transparent;cursor:pointer;font-weight:500;transition:background-color .2s var(--ease-out),border-color .2s var(--ease-out),color .2s var(--ease-out),transform .16s var(--ease-out)}
 .size[aria-pressed="true"]{background:var(--olive);border-color:var(--olive);color:var(--on-olive)}
+/* Estampado opcional sobre la prenda */
+.est-mas{color:var(--muted);font-size:13px}
+.est-panel{margin-top:14px;padding:14px;border:1.5px dashed var(--line);border-radius:14px}
+.est-panel.need{border-color:var(--accent);border-style:solid}
+.est-h{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:14px;font-weight:600}
+.est-h span{width:20px;height:20px;border-radius:50%;background:var(--olive);color:var(--on-olive);display:grid;place-items:center;font-size:12px}
+.est-grid+.est-h,.est-propio+.est-h{margin-top:18px}
+.est-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;max-height:min(420px,60vh);overflow:auto;padding:2px;margin:-2px}
+/* Todas las plantillas en el mismo marco cuadrado y blanco, sin recortar el diseño */
+.est-d{position:relative;aspect-ratio:1/1;border:1.5px solid var(--line);border-radius:10px;background:#fff;padding:0;cursor:pointer;overflow:hidden;transition:border-color .2s var(--ease-out),transform .16s var(--ease-out)}
+.est-d img{position:absolute;inset:10px 10px 24px;width:calc(100% - 20px);height:calc(100% - 34px);object-fit:contain}
+.est-d .n{position:absolute;left:0;right:0;bottom:5px;font-size:11px;color:#6E5D68;text-align:center}
+.est-d[aria-pressed="true"]{border-color:var(--olive);box-shadow:inset 0 0 0 1.5px var(--olive)}
+.est-d[aria-pressed="true"]::after{content:"✓";position:absolute;top:5px;left:5px;width:20px;height:20px;border-radius:50%;background:var(--olive);color:var(--on-olive);font-size:12px;display:grid;place-items:center}
+.est-d:active{transform:scale(.97)}
+.est-zoom{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(255,255,255,.92);box-shadow:0 0 0 1px rgba(0,0,0,.1);color:#2E1A28;display:grid;place-items:center;cursor:zoom-in;z-index:1}
+.est-d.propio{display:grid;place-items:center;align-content:center;gap:4px;background:var(--surface);border-style:dashed;color:var(--ink);font-size:13px;line-height:1.2;padding:8px}
+.est-d.propio b{font-size:22px;font-weight:400;line-height:1}
+.est-lugares{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.est-l{display:grid;grid-template-columns:44px 1fr;align-items:center;gap:10px;text-align:left;border:1.5px solid var(--line);border-radius:12px;background:transparent;padding:8px 10px;cursor:pointer;font:inherit;color:var(--ink);transition:border-color .2s var(--ease-out),transform .16s var(--ease-out)}
+.est-l svg{width:44px;height:48px}
+.est-l .t{fill:var(--tile);stroke:var(--muted);stroke-width:1;stroke-linejoin:round}
+.est-l .z{fill:var(--olive)}
+.est-l b{display:block;font-size:13px;font-weight:600;line-height:1.25}
+.est-l small{display:block;font-size:12px;color:var(--muted)}
+.est-l[aria-pressed="true"]{border-color:var(--olive);box-shadow:inset 0 0 0 1px var(--olive)}
+.est-l:active{transform:scale(.98)}
 form{margin-top:22px}
 .resumen{font-size:14px;color:var(--muted);margin:0 0 4px}
 .resumen b{color:var(--ink)}
@@ -473,9 +500,23 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 12px)}
       <div class="price tnum" id="pPrice"></div>
       <p class="lead" id="pDesc"></p>
 
-      <div class="row"><b>Color</b><div class="swatches" id="pColors"></div></div>
+      <div class="row" id="pColorRow"><b>Color</b><div class="swatches" id="pColors"></div></div>
       <div class="row"><b>Talla</b><div class="sizes" id="pSizes" role="group" aria-label="Talla"></div></div>
-      <div class="row"><b>Materiales</b><ul class="mats" id="pMats"></ul></div>
+      <div class="row est" id="pEstRow" hidden>
+        <b>Estampado</b>
+        <div class="swatches" id="pEstTog" role="group" aria-label="Estampado">
+          <button type="button" class="sw est-tog" data-e="0" aria-pressed="true">Sin estampado</button>
+          <button type="button" class="sw est-tog" data-e="1" aria-pressed="false">Agregar estampado <span class="tnum est-mas" id="pEstMas"></span></button>
+        </div>
+        <div class="est-panel" id="pEst" hidden>
+          <p class="est-h"><span>1</span>Elige el diseño</p>
+          <div class="est-grid" id="pEstGrid" role="group" aria-label="Diseños de estampado"></div>
+          <div class="field est-propio" id="pEstPropioBox" hidden><label for="fEstPropio">Describe tu diseño</label><input id="fEstPropio" placeholder="Ej.: el nombre Sofía en letra cursiva con una flor"><small>Si tienes una imagen, la puedes enviar por WhatsApp cuando te contactemos.</small></div>
+          <p class="est-h"><span>2</span>Elige el lugar</p>
+          <div class="est-lugares" id="pEstLugar" role="group" aria-label="Lugar del estampado"></div>
+        </div>
+      </div>
+      <div class="row" id="pMatRow"><b>Materiales</b><ul class="mats" id="pMats"></ul></div>
 
       <form id="pForm" novalidate>
         <p class="resumen" id="pResumen"></p>
@@ -594,6 +635,7 @@ const corazon=`<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true
 const flecha=`<svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true"><path d="M1 6h15M11 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 /* ===== Estado ===== */
+let ESTAMPADO=null, est={on:false,d:null,l:null};
 let PRODUCTOS=[], filtro="Todo", q="", orden="destacados", actual=null, talla=null, color=null, foto=0, origen=null;
 const FAV="__fav", FKEY="mm-favoritas";
 const favs=(()=>{try{return new Set(JSON.parse(localStorage.getItem(FKEY)||"[]"))}catch(e){return new Set()}})();
@@ -602,16 +644,62 @@ const sinMovimiento=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function avisar(t){const a=$("#aviso");a.textContent="";setTimeout(()=>a.textContent=t,30);}
 
 async function cargar(){
-  if(!CONECTADO){PRODUCTOS=MUESTRA.map(normalizar);render();return;}
+  if(!CONECTADO){separar(MUESTRA.map(normalizar));render();return;}
   $("#grid").innerHTML=Array.from({length:6},()=>`<div class="card sk" aria-hidden="true"><div class="photo"></div><div class="bar"></div><div class="bar"></div></div>`).join("");
   try{
     const d=await servidor("obtenerCatalogo");
     if(!d||!d.ok) throw new Error();
-    PRODUCTOS=d.prendas.map(normalizar);
+    separar(d.prendas.map(normalizar));
     render();
   }catch(e){
     $("#grid").innerHTML=`<div class="empty"><b>No pudimos cargar el catálogo.</b>Revisa tu conexión e <button onclick="cargar()">inténtalo de nuevo</button>.</div>`;
   }
+}
+
+/* ===== Estampados =====
+   La fila del panel con categoría "Estampados" no es una prenda: es el catálogo de diseños que se pueden
+   agregar a cualquier prenda. Su precio es el valor del estampado. Su primera foto es la portada
+   (el collage) y las demás son los diseños, en orden: Diseño 1, Diseño 2… */
+const esEstampado=p=>/^estampad/i.test(p.categoria.trim());
+function separar(lista){
+  const e=lista.find(esEstampado);
+  ESTAMPADO=e&&e.disponible!=="Agotado"?{precio:e.precio,disenos:e.fotos.length>1?e.fotos.slice(1):e.fotos}:null;
+  PRODUCTOS=lista.filter(p=>!esEstampado(p));
+}
+const torso=z=>`<svg viewBox="0 0 44 48" aria-hidden="true"><path class="t" d="M14 4 L18 2 Q22 7 26 2 L30 4 L42 13 L37 20 L33 17 L33 46 L11 46 L11 17 L7 20 L2 13 Z"/>${z}</svg>`;
+// "Pecho izquierdo" es el lado izquierdo de quien la usa: visto de frente queda a la derecha del dibujo
+const LUGARES=[
+  {id:"pecho-rect",lugar:"Pecho izquierdo",forma:"rectangular",medida:"3 × 5 cm",svg:torso('<rect class="z" x="24" y="12" width="6" height="3.6" rx=".6"/>')},
+  {id:"pecho-cuad",lugar:"Pecho izquierdo",forma:"cuadrado",medida:"4 × 4 cm",svg:torso('<rect class="z" x="24.5" y="11.5" width="4.8" height="4.8" rx=".6"/>')},
+  {id:"centro",lugar:"Centro del torso",forma:"",medida:"4 × 12 cm",svg:torso('<rect class="z" x="14.8" y="15" width="14.4" height="4.8" rx=".6"/>')}
+];
+const miniatura=u=>/lh3\.googleusercontent\.com\/d\/[^=?]+$/.test(u)?u+"=w400":u;
+function estFalla(img){
+  const id=(img.src.match(/\/d\/([^=?/&]+)/)||img.src.match(/[?&]id=([^&]+)/)||[])[1];
+  if(id&&!img.dataset.reintento){img.dataset.reintento="1";img.src=`https://drive.google.com/thumbnail?id=${id}&sz=w400`;return;}
+  img.replaceWith(Object.assign(document.createElement("span"),{className:"n",textContent:"Sin vista previa",style:"top:40%"}));
+}
+window.estFalla=estFalla;
+const nombreDiseno=d=>d==="propio"?"Diseño propio":`Diseño ${d+1}`;
+const lugarSel=()=>LUGARES.find(l=>l.id===est.l);
+const lugarTexto=l=>`${l.lugar}${l.forma?" "+l.forma:""} (${l.medida})`;
+const precioTotal=()=>actual.precio+(est.on&&ESTAMPADO?ESTAMPADO.precio:0);
+function pintarEstampado(){
+  const row=$("#pEstRow"); row.hidden=!ESTAMPADO; if(!ESTAMPADO) return;
+  $("#pEstMas").textContent="+"+fmt(ESTAMPADO.precio);
+  row.querySelectorAll(".est-tog").forEach(b=>b.setAttribute("aria-pressed",String(est.on===(b.dataset.e==="1"))));
+  $("#pEst").hidden=!est.on; $("#pEst").classList.remove("need");
+  $("#pEstGrid").innerHTML=ESTAMPADO.disenos.map((u,i)=>`<button type="button" class="est-d" data-d="${i}" aria-pressed="${est.d===i}" aria-label="${nombreDiseno(i)}">
+      <img src="${esc(miniatura(u))}" data-base="${esc(u)}" alt="" loading="lazy" decoding="async" onerror="estFalla(this)"><span class="n">${nombreDiseno(i)}</span>
+      <span class="est-zoom" role="button" tabindex="0" data-z="${i}" aria-label="Ampliar ${nombreDiseno(i)}"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span></button>`).join("")
+    +`<button type="button" class="est-d propio" data-d="propio" aria-pressed="${est.d==="propio"}"><b>+</b>Propón tu diseño</button>`;
+  $("#pEstPropioBox").hidden=est.d!=="propio";
+  $("#pEstLugar").innerHTML=LUGARES.map(l=>`<button type="button" class="est-l" data-l="${l.id}" aria-pressed="${est.l===l.id}">${l.svg}<span><b>${l.lugar}${l.forma?" · "+l.forma:""}</b><small class="tnum">${l.medida}</small></span></button>`).join("");
+}
+function textoEstampado(){
+  if(!est.on||!ESTAMPADO) return "";
+  const l=lugarSel(), propio=est.d==="propio"&&$("#fEstPropio").value.trim();
+  return `Estampado: ${est.d===null?"sin elegir":nombreDiseno(est.d)}${propio?` ("${propio}")`:""}, ${l?lugarTexto(l):"lugar sin elegir"}, +${fmt(ESTAMPADO.precio)}`;
 }
 
 function render(animar=true){renderChips();renderGrid(animar);}
@@ -659,12 +747,14 @@ function renderGrid(animar=true){
 /* ===== Ficha ===== */
 function abrir(ref,el){
   actual=PRODUCTOS.find(p=>p.ref===ref); if(!actual) return;
-  origen=el||null; talla=null; color=actual.colores[0]||null; foto=0;
+  origen=el||null; talla=null; color=actual.colores[0]||null; foto=0; est={on:false,d:null,l:null}; $("#fEstPropio").value="";
   $("#pCat").textContent=actual.categoria;
   $("#pName").textContent=actual.nombre;
   $("#pPrice").textContent=fmt(actual.precio);
   $("#pDesc").textContent=actual.descripcion;
   $("#pMats").innerHTML=actual.materiales.map(m=>`<li>${esc(m)}</li>`).join("");
+  $("#pMatRow").hidden=!actual.materiales.length; $("#pColorRow").hidden=!actual.colores.length;
+  pintarEstampado();
   const pf=$("#pFav"); pf.dataset.fav=actual.ref; pf.innerHTML=corazon; marcarFav(pf,favs.has(actual.ref),actual.nombre);
   $("#pSizes").innerHTML=actual.tallas.map(s=>`<button type="button" class="size" aria-pressed="false" data-s="${esc(s)}">${esc(s)}</button>`).join("");
   $("#pSizes").classList.remove("need");
@@ -728,14 +818,17 @@ function pintarColores(){
   $("#pColors").innerHTML=actual.colores.map((c,i)=>`<button type="button" class="sw" aria-pressed="${c===color}" data-i="${i}"><i style="background:${c.hex}"></i>${esc(c.nombre||"Color "+(i+1))}</button>`).join("");
 }
 function actualizarResumen(){
-  const partes=[`<b>${esc(actual.nombre)}</b>`, color&&color.nombre?esc(color.nombre):"", talla?`talla <b>${esc(talla)}</b>`:"talla sin elegir", fmt(actual.precio)].filter(Boolean);
+  const e=est.on&&ESTAMPADO, l=e&&lugarSel();
+  const estTxt=e?`estampado <b>${est.d===null?"sin elegir":nombreDiseno(est.d)}</b>${l?" en "+esc(l.lugar.toLowerCase())+(l.forma?" "+l.forma:"")+` (${l.medida})`:""}`:"";
+  const partes=[`<b>${esc(actual.nombre)}</b>`, color&&color.nombre?esc(color.nombre):"", talla?`talla <b>${esc(talla)}</b>`:"talla sin elegir", estTxt, e?`${fmt(actual.precio)} + ${fmt(ESTAMPADO.precio)} = <b>${fmt(precioTotal())}</b>`:fmt(actual.precio)].filter(Boolean);
   $("#pResumen").innerHTML="Tu pedido: "+partes.join(", ");
+  $("#pPrice").textContent=fmt(precioTotal());
 }
 function limpiarErrores(){["fNombre","fTel"].forEach(id=>{$("#"+id).removeAttribute("aria-invalid");});$("#eNombre").textContent="";$("#eTel").textContent="";}
 function confirmar(demo,numero){
   $("#pForm").hidden=true;
   const d=$("#pDone"); d.hidden=false;
-  const detalle=`${esc(actual.nombre)}, ${color&&color.nombre?esc(color.nombre)+", ":""}talla ${esc(talla)}`;
+  const detalle=`${esc(actual.nombre)}, ${color&&color.nombre?esc(color.nombre)+", ":""}talla ${esc(talla)}${est.on&&ESTAMPADO?", "+esc(textoEstampado().replace(/^Estampado/,"estampado")):""}`;
   d.innerHTML=demo
     ?`<h3>Pedido de prueba listo</h3><p>${detalle}.</p><p>La página está en modo de prueba, así que este pedido no se envió.</p><button class="ghost" type="button" data-cerrar>Seguir viendo el catálogo</button>`
     :`<h3>¡Recibimos tu pedido${numero?" #"+Number(numero):""}!</h3><p>${detalle}.</p><p>Te escribiremos al teléfono que dejaste para confirmar medidas y entrega.</p><button class="ghost" type="button" data-cerrar>Seguir viendo el catálogo</button>`;
@@ -772,6 +865,22 @@ $("#pColors").addEventListener("click",e=>{const b=e.target.closest(".sw");if(!b
   if(fotosPorColor(actual)&&foto!==Number(b.dataset.i)){foto=Number(b.dataset.i);pintarMedia(true);}
   pintarColores(); actualizarResumen();
   $(`.sw[data-i="${b.dataset.i}"]`).focus({preventScroll:true});});
+function estListo(){$("#pEst").classList.remove("need");if($("#pMsg").dataset.est){$("#pMsg").textContent="";delete $("#pMsg").dataset.est;}}
+$("#pEstTog").addEventListener("click",e=>{const b=e.target.closest(".est-tog");if(!b)return;
+  est.on=b.dataset.e==="1"; pintarEstampado(); estListo(); actualizarResumen();
+  if(est.on) $("#pEst").scrollIntoView({behavior:sinMovimiento()?"auto":"smooth",block:"nearest"});});
+function zoomDiseno(z){abrirZoom(ESTAMPADO.disenos[Number(z)],nombreDiseno(Number(z)));}
+$("#pEstGrid").addEventListener("click",e=>{
+  const z=e.target.closest("[data-z]"); if(z){zoomDiseno(z.dataset.z);return;}
+  const b=e.target.closest(".est-d");if(!b)return;
+  est.d=b.dataset.d==="propio"?"propio":Number(b.dataset.d);
+  $("#pEstGrid").querySelectorAll(".est-d").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  $("#pEstPropioBox").hidden=est.d!=="propio"; if(est.d==="propio") $("#fEstPropio").focus({preventScroll:true});
+  estListo(); actualizarResumen();});
+$("#pEstGrid").addEventListener("keydown",e=>{const z=e.target.closest("[data-z]");if(z&&(e.key==="Enter"||e.key===" ")){e.preventDefault();e.stopPropagation();zoomDiseno(z.dataset.z);}});
+$("#pEstLugar").addEventListener("click",e=>{const b=e.target.closest(".est-l");if(!b)return;est.l=b.dataset.l;
+  $("#pEstLugar").querySelectorAll(".est-l").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));estListo();actualizarResumen();});
+$("#fEstPropio").addEventListener("input",()=>{estListo();actualizarResumen();});
 $("#pDone").addEventListener("click",e=>{if(e.target.closest("[data-cerrar]"))cerrarConTransicion();});
 $("#pFav").addEventListener("click",e=>toggleFav(e.currentTarget.dataset.fav));
 $("#bd").addEventListener("click",cerrarConTransicion);$("#close").addEventListener("click",cerrarConTransicion);
@@ -859,12 +968,21 @@ $("#pForm").addEventListener("submit",async e=>{
     msg.textContent="Elige una talla para enviar el pedido."; msg.className="note err"; msg.dataset.talla="1";
     s.querySelector(".size")?.focus({preventScroll:true}); return;
   }
+  if(est.on&&ESTAMPADO&&(est.d===null||!est.l||(est.d==="propio"&&!$("#fEstPropio").value.trim()))){
+    const p=$("#pEst"); p.classList.add("need"); p.scrollIntoView({behavior:"smooth",block:"center"});
+    msg.textContent=est.d===null?"Elige el diseño del estampado.":est.d==="propio"&&!$("#fEstPropio").value.trim()?"Describe el diseño que quieres estampar.":"Elige el lugar del estampado.";
+    msg.className="note err"; msg.dataset.est="1"; return;
+  }
   let primero=null;
   if(!f.nombre.value.trim()){f.nombre.setAttribute("aria-invalid","true");$("#eNombre").textContent="Escribe tu nombre.";primero=primero||f.nombre;}
   if(f.telefono.value.replace(/\D/g,"").length<7){f.telefono.setAttribute("aria-invalid","true");$("#eTel").textContent="Escribe un número de al menos 7 dígitos.";primero=primero||f.telefono;}
   if(primero){primero.focus();return;}
   const pedido={referencia:actual.ref,talla,color:color?(color.nombre||color.hex):"",
     nombre:f.nombre.value.trim(),telefono:f.telefono.value.trim(),correo:f.correo.value.trim(),notas:f.notas.value.trim()};
+  // El estampado va en sus propios campos y también al inicio de las notas, para que siempre llegue en la hoja y en el correo
+  const estTxt=textoEstampado();
+  if(estTxt){const l=lugarSel();Object.assign(pedido,{estampado:nombreDiseno(est.d),estampadoLugar:lugarTexto(l),estampadoPrecio:ESTAMPADO.precio,total:precioTotal(),
+    notas:estTxt+`. Total: ${fmt(precioTotal())}`+(pedido.notas?" | "+pedido.notas:"")});}
   btn.disabled=true; btn.textContent="Enviando pedido…";
   try{
     if(!CONECTADO){await new Promise(r=>setTimeout(r,600));confirmar(true);return;}
