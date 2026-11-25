@@ -219,6 +219,19 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 .sizes.need{box-shadow:0 0 0 2px var(--accent),0 0 0 6px color-mix(in oklab,var(--accent) 20%,transparent)}
 .size{min-width:48px;height:44px;border:1.5px solid var(--line);border-radius:10px;background:transparent;cursor:pointer;font-weight:500;transition:background-color .2s var(--ease-out),border-color .2s var(--ease-out),color .2s var(--ease-out),transform .16s var(--ease-out)}
 .size[aria-pressed="true"]{background:var(--olive);border-color:var(--olive);color:var(--on-olive)}
+/* Tabla de medidas */
+.row-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.row-h b{font-size:14px}
+.guia-btn{display:inline-flex;align-items:center;gap:6px;border:0;background:none;padding:4px 0;font:inherit;font-size:14px;color:var(--accent-ink);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.guia{margin-top:14px;padding:14px;border:1.5px dashed var(--line);border-radius:14px;display:grid;gap:16px}
+.guia table{width:100%;border-collapse:collapse;font-size:14px}
+.guia caption{text-align:left;font-weight:600;padding-bottom:6px}
+.guia th,.guia td{padding:6px 8px;border-bottom:1px dashed var(--line);text-align:right}
+.guia th[scope="row"]{white-space:nowrap;text-align:left;font-weight:400;color:var(--muted)}
+.guia thead th{font-weight:600}
+.guia .sel{background:color-mix(in oklab,var(--olive) 12%,transparent)}
+.guia thead .sel{color:var(--olive)}
+.guia p{grid-column:1/-1;margin:0;font-size:13px;color:var(--muted)}
 /* Estampado opcional sobre la prenda */
 .est-mas{color:var(--muted);font-size:13px}
 .est-panel{margin-top:14px;padding:14px;border:1.5px dashed var(--line);border-radius:14px}
@@ -501,7 +514,10 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 12px)}
       <p class="lead" id="pDesc"></p>
 
       <div class="row" id="pColorRow"><b>Color</b><div class="swatches" id="pColors"></div></div>
-      <div class="row"><b>Talla</b><div class="sizes" id="pSizes" role="group" aria-label="Talla"></div></div>
+      <div class="row"><div class="row-h"><b>Talla</b><button type="button" class="guia-btn" id="pGuiaBtn" aria-expanded="false" aria-controls="pGuia"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="8" width="20" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M6 8v3M10 8v4M14 8v3M18 8v4" stroke="currentColor" stroke-width="1.6"/></svg>Tabla de medidas</button></div>
+        <div class="sizes" id="pSizes" role="group" aria-label="Talla"></div>
+        <div class="guia" id="pGuia" hidden></div>
+      </div>
       <div class="row est" id="pEstRow" hidden>
         <b>Estampado</b>
         <div class="swatches" id="pEstTog" role="group" aria-label="Estampado">
@@ -635,6 +651,18 @@ const corazon=`<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true
 const flecha=`<svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true"><path d="M1 6h15M11 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 /* ===== Estado ===== */
+/* Tabla de medidas (en centímetros). Para cambiar una medida o agregar una talla, edita estos números. */
+const MEDIDAS=[
+  {grupo:"Hombre",tallas:["M","L"],filas:[["Pecho",108,114],["Largo total",76,77],["Largo de manga",63,64]]},
+  {grupo:"Mujer",tallas:["S","M"],filas:[["Busto",90,98],["Largo total",60,62],["Largo de manga",60,62]]}
+];
+function pintarGuia(){
+  const c=t=>t===talla?' class="sel"':"";
+  $("#pGuia").innerHTML=MEDIDAS.map(g=>`<table><caption>${esc(g.grupo)}</caption>
+    <thead><tr><td></td>${g.tallas.map(t=>`<th scope="col"${c(t)}>${esc(t)}</th>`).join("")}</tr></thead>
+    <tbody>${g.filas.map(([n,...v])=>`<tr><th scope="row">${esc(n)}</th>${v.map((x,i)=>`<td class="tnum${g.tallas[i]===talla?" sel":""}">${x}</td>`).join("")}</tr>`).join("")}</tbody></table>`).join("")
+    +`<p>Medidas de la prenda en centímetros. Si tu talla no aparece o necesitas medidas especiales, escríbelas en las notas del pedido.</p>`;
+}
 let ESTAMPADO=null, est={on:false,d:null,l:null};
 let PRODUCTOS=[], filtro="Todo", q="", orden="destacados", actual=null, talla=null, color=null, foto=0, origen=null;
 const FAV="__fav", FKEY="mm-favoritas";
@@ -754,7 +782,7 @@ function abrir(ref,el){
   $("#pDesc").textContent=actual.descripcion;
   $("#pMats").innerHTML=actual.materiales.map(m=>`<li>${esc(m)}</li>`).join("");
   $("#pMatRow").hidden=!actual.materiales.length; $("#pColorRow").hidden=!actual.colores.length;
-  pintarEstampado();
+  pintarEstampado(); pintarGuia(); $("#pGuia").hidden=true; $("#pGuiaBtn").setAttribute("aria-expanded","false");
   const pf=$("#pFav"); pf.dataset.fav=actual.ref; pf.innerHTML=corazon; marcarFav(pf,favs.has(actual.ref),actual.nombre);
   $("#pSizes").innerHTML=actual.tallas.map(s=>`<button type="button" class="size" aria-pressed="false" data-s="${esc(s)}">${esc(s)}</button>`).join("");
   $("#pSizes").classList.remove("need");
@@ -857,7 +885,9 @@ $("#pThumbs").addEventListener("click",e=>{const b=e.target.closest("[data-f]");
 $("#pSizes").addEventListener("click",e=>{const b=e.target.closest(".size");if(!b)return;talla=b.dataset.s;
   document.querySelectorAll(".size").forEach(x=>x.setAttribute("aria-pressed",x===b));
   $("#pSizes").classList.remove("need"); if($("#pMsg").dataset.talla){$("#pMsg").textContent="";delete $("#pMsg").dataset.talla;}
-  actualizarResumen();});
+  pintarGuia(); actualizarResumen();});
+$("#pGuiaBtn").addEventListener("click",e=>{const g=$("#pGuia"),abrirG=g.hidden;g.hidden=!abrirG;e.currentTarget.setAttribute("aria-expanded",String(abrirG));
+  if(abrirG) g.scrollIntoView({behavior:sinMovimiento()?"auto":"smooth",block:"nearest"});});
 $("#pColors").addEventListener("click",e=>{const b=e.target.closest(".sw");if(!b)return;
   color=actual.colores[Number(b.dataset.i)];
   $("#pMedia").style.cssText=jVars(color.hex);  // la ilustración cambia de color con una transición
