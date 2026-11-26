@@ -1,0 +1,12 @@
+# Cabeceras de seguridad que Cloudflare Pages aplica a todo el sitio
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Strict-Transport-Security: max-age=31536000
+
+# Los documentos internos del repositorio no deben indexarse en buscadores
+/docs/*
+  X-Robots-Tag: noindex
+/README.md
+  X-Robots-Tag: noindex
