@@ -1,8 +1,9 @@
 # Martha Martínez | Ropa hecha a mano
 
-Sitio web de Diseños y Creaciones Martha Martínez, publicado con GitHub Pages.
+Sitio web de Diseños y Creaciones Martha Martínez, publicado con Cloudflare Pages.
 
-- Sitio: https://racsoscar.github.io/martha-martinez/
+- Sitio: https://martha-martinez-disenos.pages.dev/ (Cloudflare Pages, se publica solo desde la rama `main`)
+- El enlace viejo (racsoscar.github.io/martha-martinez) redirige al nuevo.
 - Las prendas se cargan desde el panel administrativo (Apps Script, `?vista=panel`) y se guardan en Google Sheets.
 - Este sitio las lee desde la URL del script configurada en `CONFIG.apiUrl` dentro de `index.html`.
 - Los pedidos se envían al mismo script, que los guarda en la pestaña "Pedidos" y avisa por correo.
