@@ -410,6 +410,26 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 12px)}
 .closing .btn{background:var(--on-olive);color:var(--olive)}
 .foot{border-top:1.5px dashed var(--line);padding:28px 0 40px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:14px}
 .foot .mark img{height:84px}
+/* Datos personales (Ley 1581 de 2012) */
+.foot-legal{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding-top:14px;border-top:1px dashed var(--line);font-size:13px}
+.linkbtn{all:unset;cursor:pointer;color:var(--olive);text-decoration:underline;text-underline-offset:3px;font-weight:500}
+.linkbtn:focus-visible{outline:2px solid var(--olive);outline-offset:2px;border-radius:2px}
+.consent{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:13.5px;line-height:1.45;color:var(--ink)}
+.consent input{flex:none;width:20px;height:20px;margin:1px 0 0;accent-color:var(--olive);cursor:pointer}
+.consent label{cursor:pointer}
+.consent.need input{outline:2px solid var(--err);outline-offset:2px}
+#eDatos{display:block;font-size:13px;color:var(--err);margin:6px 0 0 30px}
+#eDatos:empty{display:none}
+.politica{width:min(680px,calc(100% - 24px));max-height:min(86vh,900px);padding:0;border:0;border-radius:18px;background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.politica::backdrop{background:rgba(18,24,20,.6)}
+.politica .pol-in{padding:26px 24px 8px;overflow:auto;max-height:calc(min(86vh,900px) - 74px)}
+.politica h2{font-family:var(--display);font-weight:800;font-size:26px;line-height:1.1;margin:0 0 4px;color:var(--olive)}
+.politica h3{font-size:15px;margin:20px 0 6px}
+.politica p,.politica li{font-size:14px;line-height:1.55;color:var(--ink);margin:0 0 8px;text-wrap:pretty}
+.politica ul{padding-left:20px;margin:0 0 8px}
+.politica .pol-meta{color:var(--muted);font-size:13px;margin-bottom:6px}
+.politica .pol-pie{display:flex;justify-content:flex-end;padding:14px 24px 18px;border-top:1px dashed var(--line)}
+.politica .pol-pie button{border:0;border-radius:10px;padding:11px 20px;background:var(--olive);color:var(--on-olive);font:inherit;font-weight:600;cursor:pointer}
 
 /* Revelado suave al hacer scroll (el contenido es visible si no hay JavaScript) */
 @media (prefers-reduced-motion:no-preference){
@@ -492,9 +512,58 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 12px)}
   <footer class="foot">
     <a class="mark" href="#inicio"><img class="on-light" src="img/logo-color.png" alt="Martha Martínez, Diseños y Creaciones" width="150" height="68"><img class="on-dark" src="img/logo-claro.png" alt="Martha Martínez, Diseños y Creaciones" width="150" height="68"></a>
     <span>Diseños y Creaciones Martha Martínez. Confección bajo pedido en Bogotá, Colombia.</span>
+    <div class="foot-legal">
+      <span>Martha Martínez · RUT 51704259-8</span>
+      <button type="button" class="linkbtn" data-politica>Política de tratamiento de datos personales</button>
+    </div>
   </footer>
 </div>
 <div class="sr" id="aviso" aria-live="polite"></div>
+
+<dialog class="politica" id="politica" aria-labelledby="polT">
+  <div class="pol-in">
+    <h2 id="polT">Política de tratamiento de datos personales</h2>
+    <p class="pol-meta">Vigente desde el 26 de noviembre de 2026</p>
+
+    <h3>1. Responsable del tratamiento</h3>
+    <p>Martha Martínez, Diseños y Creaciones Martha Martínez, identificada con RUT 51704259-8, con taller en Bogotá, Colombia.</p>
+
+    <h3>2. Marco legal</h3>
+    <p>Esta política se rige por el artículo 15 de la Constitución Política, la Ley 1581 de 2012, el Decreto 1377 de 2013 (compilado en el Decreto 1074 de 2015) y las demás normas que los modifiquen o complementen.</p>
+
+    <h3>3. Datos que recogemos</h3>
+    <p>Al hacer un pedido nos entregas tu nombre, tu teléfono o WhatsApp, tu correo (si decides dejarlo) y los detalles de la prenda: modelo, talla, color, estampado y notas para la confección. No pedimos datos sensibles.</p>
+
+    <h3>4. Para qué los usamos</h3>
+    <p>Tus datos se usan <strong>únicamente para gestionar la compra</strong> que solicitaste:</p>
+    <ul>
+      <li>Contactarte para validar y confirmar el pedido, las medidas y el precio.</li>
+      <li>Confeccionar la prenda, coordinar el pago y la entrega.</li>
+      <li>Atender cambios, arreglos o garantías de esa compra.</li>
+    </ul>
+    <p>No vendemos ni compartimos tus datos con terceros y no los usamos para publicidad. Se guardan en servicios de Google (hoja de cálculo y correo) con acceso restringido al taller.</p>
+
+    <h3>5. Tus derechos</h3>
+    <p>Como titular de los datos puedes, de forma gratuita:</p>
+    <ul>
+      <li>Conocer, actualizar y corregir tus datos.</li>
+      <li>Pedir prueba de la autorización que nos diste.</li>
+      <li>Saber qué uso les hemos dado.</li>
+      <li>Revocar la autorización y pedir que borremos tus datos, cuando no exista una obligación legal o contractual de conservarlos.</li>
+      <li>Presentar quejas ante la Superintendencia de Industria y Comercio.</li>
+    </ul>
+
+    <h3>6. Cómo ejercer tus derechos</h3>
+    <p>Después de registrar tu pedido te contactaremos para validarlo y confirmarlo. Por ese mismo medio puedes enviarnos cualquier consulta o reclamo sobre tus datos. Las consultas se responden en máximo 10 días hábiles y los reclamos en máximo 15 días hábiles, según los plazos de la Ley 1581 de 2012.</p>
+
+    <h3>7. Cuánto tiempo los conservamos</h3>
+    <p>Mientras dure la compra y el tiempo necesario para atender garantías y cumplir obligaciones legales y contables. Después se eliminan.</p>
+
+    <h3>8. Cambios a esta política</h3>
+    <p>Cualquier cambio se publicará en esta página con su nueva fecha de vigencia.</p>
+  </div>
+  <div class="pol-pie"><button type="button" id="polCerrar">Entendido</button></div>
+</dialog>
 
 <div class="backdrop" id="bd"></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="pName" inert>
@@ -544,6 +613,11 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 12px)}
         <div class="field"><label for="fCorreo">Correo <span style="color:var(--muted);font-weight:400">(opcional)</span></label><input id="fCorreo" name="correo" type="email" autocomplete="email"></div>
         <div class="field"><label for="fNotas">Notas para la confección <span style="color:var(--muted);font-weight:400">(opcional)</span></label><textarea id="fNotas" name="notas" rows="2" placeholder="Medidas especiales o fecha en que la necesitas"></textarea></div>
         <input name="sitio" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="consent" id="pDatosBox">
+          <input type="checkbox" id="fDatos" name="datos" aria-describedby="eDatos">
+          <label for="fDatos">Autorizo a Martha Martínez (RUT 51704259-8) a usar mis datos personales únicamente para gestionar esta compra: contactarme para validar y confirmar el pedido, confeccionarlo y entregarlo, según la <button type="button" class="linkbtn" data-politica>Política de tratamiento de datos personales</button> y la Ley 1581 de 2012.</label>
+        </div>
+        <small id="eDatos" role="alert"></small>
         <button class="cta" id="pSend" type="submit">Enviar pedido</button>
         <p class="note" id="pMsg" role="status"></p>
       </form>
@@ -853,7 +927,15 @@ function actualizarResumen(){
   $("#pResumen").innerHTML="Tu pedido: "+partes.join(", ");
   $("#pPrice").textContent=fmt(precioTotal());
 }
-function limpiarErrores(){["fNombre","fTel"].forEach(id=>{$("#"+id).removeAttribute("aria-invalid");});$("#eNombre").textContent="";$("#eTel").textContent="";}
+function limpiarErrores(){["fNombre","fTel"].forEach(id=>{$("#"+id).removeAttribute("aria-invalid");});$("#eNombre").textContent="";$("#eTel").textContent="";$("#pDatosBox").classList.remove("need");$("#eDatos").textContent="";}
+
+/* Política de datos personales */
+const POLITICA_VERSION="26-nov-2026";
+const POL=$("#politica");
+document.addEventListener("click",e=>{if(e.target.closest("[data-politica]")){e.preventDefault();POL.showModal();POL.querySelector(".pol-in").scrollTop=0;}});
+$("#polCerrar").addEventListener("click",()=>POL.close());
+POL.addEventListener("click",e=>{if(e.target===POL)POL.close();});
+$("#fDatos").addEventListener("change",()=>{$("#pDatosBox").classList.remove("need");$("#eDatos").textContent="";});
 function confirmar(demo,numero){
   $("#pForm").hidden=true;
   const d=$("#pDone"); d.hidden=false;
@@ -915,7 +997,7 @@ $("#fEstPropio").addEventListener("input",()=>{estListo();actualizarResumen();})
 $("#pDone").addEventListener("click",e=>{if(e.target.closest("[data-cerrar]"))cerrarConTransicion();});
 $("#pFav").addEventListener("click",e=>toggleFav(e.currentTarget.dataset.fav));
 $("#bd").addEventListener("click",cerrarConTransicion);$("#close").addEventListener("click",cerrarConTransicion);
-document.addEventListener("keydown",e=>{if(e.key!=="Escape")return; if(Z.el&&!Z.el.hidden){cerrarZoom();return;} cerrarConTransicion();});
+document.addEventListener("keydown",e=>{if(e.key!=="Escape")return; if(POL.open)return; if(Z.el&&!Z.el.hidden){cerrarZoom();return;} cerrarConTransicion();});
 /* ===== Fotos: respaldo si una imagen falla y visor con zoom ===== */
 function fotoFalla(img){
   const id=(img.src.match(/\/d\/([^=?/&]+)/)||img.src.match(/[?&]id=([^&]+)/)||[])[1];
@@ -1008,12 +1090,19 @@ $("#pForm").addEventListener("submit",async e=>{
   if(!f.nombre.value.trim()){f.nombre.setAttribute("aria-invalid","true");$("#eNombre").textContent="Escribe tu nombre.";primero=primero||f.nombre;}
   if(f.telefono.value.replace(/\D/g,"").length<7){f.telefono.setAttribute("aria-invalid","true");$("#eTel").textContent="Escribe un número de al menos 7 dígitos.";primero=primero||f.telefono;}
   if(primero){primero.focus();return;}
+  if(!f.datos.checked){
+    $("#pDatosBox").classList.add("need"); $("#eDatos").textContent="Para enviar el pedido debes autorizar el uso de tus datos.";
+    f.datos.focus(); return;
+  }
   const pedido={referencia:actual.ref,talla,color:color?(color.nombre||color.hex):"",
     nombre:f.nombre.value.trim(),telefono:f.telefono.value.trim(),correo:f.correo.value.trim(),notas:f.notas.value.trim()};
   // El estampado va en sus propios campos y también al inicio de las notas, para que siempre llegue en la hoja y en el correo
   const estTxt=textoEstampado();
   if(estTxt){const l=lugarSel();Object.assign(pedido,{estampado:nombreDiseno(est.d),estampadoLugar:lugarTexto(l),estampadoPrecio:ESTAMPADO.precio,total:precioTotal(),
     notas:estTxt+`. Total: ${fmt(precioTotal())}`+(pedido.notas?" | "+pedido.notas:"")});}
+  // Prueba de la autorización (art. 9 Ley 1581): queda con el pedido en la hoja y en el correo
+  pedido.autorizacionDatos=`Sí, ${new Date().toISOString()}, política del ${POLITICA_VERSION}`;
+  pedido.notas=(pedido.notas?pedido.notas+" | ":"")+`Autorizó el tratamiento de datos (política del ${POLITICA_VERSION})`;
   btn.disabled=true; btn.textContent="Enviando pedido…";
   try{
     if(!CONECTADO){await new Promise(r=>setTimeout(r,600));confirmar(true);return;}
