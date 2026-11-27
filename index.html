@@ -1096,13 +1096,11 @@ $("#pForm").addEventListener("submit",async e=>{
   }
   const pedido={referencia:actual.ref,talla,color:color?(color.nombre||color.hex):"",
     nombre:f.nombre.value.trim(),telefono:f.telefono.value.trim(),correo:f.correo.value.trim(),notas:f.notas.value.trim()};
-  // El estampado va en sus propios campos y también al inicio de las notas, para que siempre llegue en la hoja y en el correo
-  const estTxt=textoEstampado();
-  if(estTxt){const l=lugarSel();Object.assign(pedido,{estampado:nombreDiseno(est.d),estampadoLugar:lugarTexto(l),estampadoPrecio:ESTAMPADO.precio,total:precioTotal(),
-    notas:estTxt+`. Total: ${fmt(precioTotal())}`+(pedido.notas?" | "+pedido.notas:"")});}
-  // Prueba de la autorización (art. 9 Ley 1581): queda con el pedido en la hoja y en el correo
-  pedido.autorizacionDatos=`Sí, ${new Date().toISOString()}, política del ${POLITICA_VERSION}`;
-  pedido.notas=(pedido.notas?pedido.notas+" | ":"")+`Autorizó el tratamiento de datos (política del ${POLITICA_VERSION})`;
+  // Cada característica va en su propio campo (columna en la hoja); "notas" queda solo con lo que escribe el cliente
+  if(textoEstampado()){const l=lugarSel(), propio=est.d==="propio"&&$("#fEstPropio").value.trim();
+    Object.assign(pedido,{estampado:nombreDiseno(est.d)+(propio?` ("${propio}")`:""),estampadoLugar:lugarTexto(l),estampadoPrecio:ESTAMPADO.precio,total:precioTotal()});}
+  // Prueba de la autorización (art. 9 Ley 1581): queda en su columna de la hoja y en el correo
+  pedido.autorizacionDatos=`Sí, ${new Date().toLocaleString("es-CO",{timeZone:"America/Bogota"})}, política del ${POLITICA_VERSION}`;
   btn.disabled=true; btn.textContent="Enviando pedido…";
   try{
     if(!CONECTADO){await new Promise(r=>setTimeout(r,600));confirmar(true);return;}
